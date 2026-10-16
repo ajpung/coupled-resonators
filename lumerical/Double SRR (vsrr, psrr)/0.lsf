@@ -1,0 +1,175 @@
+# Clear workspace
+clear; clc; deleteall;
+
+# ---------------------------------------
+#               PARAMETERS               
+# ---------------------------------------
+# UNIT CELL
+floor_t  = 0.2e-6;  # Floor thickness
+period_x = 2.0e-6;  # Unit cell width
+period_y = 2.0e-6;  # Unit cell depth
+wall_h   = 3.0e-6;  # Wall height
+wall_t   = 0.1e-6;  # Wall thickness
+
+# ---------------------------------------
+#                UNIT CELL               
+# ---------------------------------------
+# FLOOR
+addrect;
+set("name", "cell_floor");
+set("x span", period_x);
+set("y span", period_y);
+set("z min", -wall_h/2);
+set("z max", -wall_h/2 + floor_t);
+set("material", "Si (Silicon) - Palik");
+set("x",0);
+set("y",0);
+
+# LEFT WALL
+addrect;
+set("name", "wall_L");
+set("x min", -period_x/2);
+set("x max", -period_x/2+wall_t/2);
+set("y min", -period_y/2);
+set("y max",  period_y/2);
+set("z min", -wall_h/2+floor_t);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+
+## RIGHT WALL
+#addrect;
+#set("name", "wall_R");
+#set("x min", period_x/2-wall_t/2);
+#set("x max", period_x/2);
+#set("y min", -period_y/2);
+#set("y max", period_y/2);
+#set("z min", -wall_h/2+floor_t);
+#set("z max", wall_h/2);
+#set("material", "Si (Silicon) - Palik");
+
+# BACK WALL
+addrect;
+set("name", "wall_B");
+set("x min", -period_x/2+wall_t/2);
+set("x max",  period_x/2-wall_t/2);
+set("y min", period_y/2-wall_t/2);
+set("y max", period_y/2);
+set("z min", -wall_h/2+floor_t);
+set("z max", wall_h/2);
+set("material", "Si (Silicon) - Palik");
+
+## FRONT WALL
+#addrect;
+#set("name", "wall_B");
+#set("x min", -period_x/2+wall_t/2);
+#set("x max",  period_x/2-wall_t/2);
+#set("y min", -period_y/2);
+#set("y max", -period_y/2+wall_t/2);
+#set("z min", -wall_h/2+floor_t);
+#set("z max", wall_h/2);
+#set("material", "Si (Silicon) - Palik");
+
+# ---------------------------------------
+#                BACK VSRR
+# ---------------------------------------
+# LEFT SRR (LSRR)
+lsrr_t = 0.05e-6;       # SRR thickness
+lsrr_w = 1.0e-6;       # SRR width
+lsrr_h = 2.7e-6;       # SRR height
+lsrr_g = 0.2e-6;       # SRR gap
+lsrr_arm_w = 0.2e-6;  # SRR arm thickness
+
+# TOP ARM
+addrect;
+set("name", "vsrr_l_top");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min", -lsrr_w/2);
+set("y max",  lsrr_w/2);
+set("z min",  lsrr_h/2-lsrr_arm_w);
+set("z max",  lsrr_h/2);
+set("material", "Au (Gold) - Palik");
+
+# LEFT ARM
+addrect;
+set("name", "vsrr_l_left");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min", -lsrr_w/2);
+set("y max", -lsrr_w/2+lsrr_arm_w);
+set("z min",  -lsrr_h/2+lsrr_arm_w);
+set("z max",  lsrr_h/2-lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# RIGHT ARM
+addrect;
+set("name", "vsrr_l_right");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min",  lsrr_w/2-lsrr_arm_w);
+set("y max",  lsrr_w/2);
+set("z min", -lsrr_h/2+lsrr_arm_w);
+set("z max",  lsrr_h/2-lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# BOTTOM LEFT ARM
+addrect;
+set("name", "vsrr_l_lbot");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min", -lsrr_w/2+lsrr_arm_w);
+set("y max", -lsrr_g/2);
+set("z min", -lsrr_h/2+lsrr_arm_w);
+set("z max", -lsrr_h/2+2*lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# BOTTOM RIGHT ARM
+addrect;
+set("name", "vsrr_l_lbot");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min",  lsrr_g/2);
+set("y max",  lsrr_w/2-lsrr_arm_w);
+set("z min", -lsrr_h/2+lsrr_arm_w);
+set("z max", -lsrr_h/2+2*lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# ---------------------------------------
+#               BOTTOM VSRR              
+# ---------------------------------------
+# FLOOR SRR (BSRR)
+fsrr_t = 0.05e-6;      # SRR thickness
+fsrr_w = 1.0e-6;       # SRR width
+fsrr_h = 1.7e-6;       # SRR height
+fsrr_g = 0.2e-6;       # SRR gap
+fsrr_arm_w = 0.1e-6;   # SRR arm thickness
+
+# TOP ARM
+addrect;
+set("name", "hsrr_f_top");
+set("x min",  fsrr_h/2-fsrr_arm_w);
+set("x max",  fsrr_h/2);
+set("y min", -fsrr_w/2);
+set("y max",  fsrr_w/2);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+fsrr_t);
+
+# LEFT ARM
+addrect;
+set("name", "hsrr_f_left");
+set("x min", -fsrr_h/2+fsrr_arm_w);
+set("x max",  fsrr_h/2-fsrr_arm_w);
+set("y min", fsrr_w/2-fsrr_arm_w);
+set("y max", fsrr_w/2);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+fsrr_t);
+
+# RIGHT ARM
+addrect;
+set("name", "hsrr_f_left");
+set("x min", -fsrr_h/2+fsrr_arm_w);
+set("x max",  fsrr_h/2-fsrr_arm_w);
+set("y min",  -fsrr_w/2);
+set("y max",  -fsrr_w/2+fsrr_arm_w);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+fsrr_t);
