@@ -137,39 +137,49 @@ set("material", "Au (Gold) - Palik");
 # ---------------------------------------
 #               BOTTOM VSRR              
 # ---------------------------------------
-# FLOOR SRR (BSRR)
-fsrr_t = 0.05e-6;      # SRR thickness
-fsrr_w = 1.0e-6;       # SRR width
-fsrr_h = 1.7e-6;       # SRR height
-fsrr_g = 0.2e-6;       # SRR gap
-fsrr_arm_w = 0.1e-6;   # SRR arm thickness
+# PLANAR SRR (BSRR)
+psrr_t = 0.05e-6;      # SRR thickness
+psrr_w = 1.0e-6;       # SRR width
+psrr_h = 1.7e-6;       # SRR height
+psrr_g = 0.2e-6;       # SRR gap
+psrr_arm_w = 0.1e-6;   # SRR arm thickness
 
 # TOP ARM
 addrect;
-set("name", "hsrr_f_top");
-set("x min",  fsrr_h/2-fsrr_arm_w);
-set("x max",  fsrr_h/2);
-set("y min", -fsrr_w/2);
-set("y max",  fsrr_w/2);
+set("name", "psrr_f_top");
+set("x min",  psrr_h/2-psrr_arm_w);
+set("x max",  psrr_h/2);
+set("y min", -psrr_w/2);
+set("y max",  psrr_w/2);
 set("z min", -wall_h/2+floor_t);
-set("z max", -wall_h/2+floor_t+fsrr_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
 
 # LEFT ARM
 addrect;
-set("name", "hsrr_f_left");
-set("x min", -fsrr_h/2+fsrr_arm_w);
-set("x max",  fsrr_h/2-fsrr_arm_w);
-set("y min", fsrr_w/2-fsrr_arm_w);
-set("y max", fsrr_w/2);
+set("name", "psrr_f_left");
+set("x min", -psrr_h/2+psrr_arm_w);
+set("x max",  psrr_h/2-psrr_arm_w);
+set("y min",  psrr_w/2-psrr_arm_w);
+set("y max",  psrr_w/2);
 set("z min", -wall_h/2+floor_t);
-set("z max", -wall_h/2+floor_t+fsrr_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
 
 # RIGHT ARM
 addrect;
-set("name", "hsrr_f_left");
-set("x min", -fsrr_h/2+fsrr_arm_w);
-set("x max",  fsrr_h/2-fsrr_arm_w);
-set("y min",  -fsrr_w/2);
-set("y max",  -fsrr_w/2+fsrr_arm_w);
+set("name", "psrr_f_left");
+set("x min", -psrr_h/2+psrr_arm_w);
+set("x max",  psrr_h/2-psrr_arm_w);
+set("y min", -psrr_w/2);
+set("y max", -psrr_w/2+psrr_arm_w);
 set("z min", -wall_h/2+floor_t);
-set("z max", -wall_h/2+floor_t+fsrr_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
+
+# BOTTOM LEFT ARM
+#addrect;
+#set("name", "psrr_f_left");
+#set("x min", -fsrr_h/2+fsrr_arm_w);
+#set("x max",  fsrr_h/2-fsrr_arm_w);
+#set("y min",  -fsrr_w/2);
+#set("y max",  -fsrr_w/2+fsrr_arm_w);
+#set("z min", -wall_h/2+floor_t);
+#set("z max", -wall_h/2+floor_t+fsrr_t);
