@@ -73,11 +73,11 @@ set("material", "Si (Silicon) - Palik");
 #                BACK VSRR
 # ---------------------------------------
 # LEFT SRR (LSRR)
-lsrr_t = 0.05e-6;     # SRR thickness
+lsrr_t = 0.01e-6;     # SRR thickness
 lsrr_w = 1.0e-6;      # SRR width
-lsrr_h = 2.7e-6;      # SRR height
-lsrr_g = 0.2e-6;      # SRR gap
-lsrr_arm_w = 0.2e-6;  # SRR arm thickness
+lsrr_h = 2.2e-6;      # SRR height
+lsrr_g = 0.1e-6;      # SRR gap
+lsrr_arm_w = 0.04e-6;  # SRR arm thickness
 
 # TOP ARM
 addrect;
@@ -97,7 +97,7 @@ set("x min", -period_x/2+wall_t/2);
 set("x max", -period_x/2+wall_t/2+lsrr_t);
 set("y min", -lsrr_w/2);
 set("y max", -lsrr_w/2+lsrr_arm_w);
-set("z min",  -lsrr_h/2+lsrr_arm_w);
+set("z min",  -lsrr_h/2);
 set("z max",  lsrr_h/2-lsrr_arm_w);
 set("material", "Au (Gold) - Palik");
 
@@ -108,7 +108,7 @@ set("x min", -period_x/2+wall_t/2);
 set("x max", -period_x/2+wall_t/2+lsrr_t);
 set("y min",  lsrr_w/2-lsrr_arm_w);
 set("y max",  lsrr_w/2);
-set("z min", -lsrr_h/2+lsrr_arm_w);
+set("z min", -lsrr_h/2);
 set("z max",  lsrr_h/2-lsrr_arm_w);
 set("material", "Au (Gold) - Palik");
 
@@ -119,8 +119,8 @@ set("x min", -period_x/2+wall_t/2);
 set("x max", -period_x/2+wall_t/2+lsrr_t);
 set("y min", -lsrr_w/2+lsrr_arm_w);
 set("y max", -lsrr_g/2);
-set("z min", -lsrr_h/2+lsrr_arm_w);
-set("z max", -lsrr_h/2+2*lsrr_arm_w);
+set("z min",  -lsrr_h/2);
+set("z max",  -lsrr_h/2+lsrr_arm_w);
 set("material", "Au (Gold) - Palik");
 
 # BOTTOM RIGHT ARM
@@ -130,8 +130,8 @@ set("x min", -period_x/2+wall_t/2);
 set("x max", -period_x/2+wall_t/2+lsrr_t);
 set("y min",  lsrr_g/2);
 set("y max",  lsrr_w/2-lsrr_arm_w);
-set("z min", -lsrr_h/2+lsrr_arm_w);
-set("z max", -lsrr_h/2+2*lsrr_arm_w);
+set("z min", -lsrr_h/2);
+set("z max", -lsrr_h/2+lsrr_arm_w);
 set("material", "Au (Gold) - Palik");
 
 # ---------------------------------------
@@ -141,55 +141,60 @@ set("material", "Au (Gold) - Palik");
 psrr_t = 0.05e-6;      # SRR thickness
 psrr_w = 1.0e-6;       # SRR width
 psrr_h = 1.7e-6;       # SRR height
-psrr_g = 0.5e-6;       # SRR gap
-psrr_arm_w = 0.15e-6;   # SRR arm thickness
+psrr_g = 0.1e-6;       # SRR gap
+psrr_arm_w = 0.1e-6;   # SRR arm thickness
 
-## TOP ARM
-#addrect;
-#set("name", "psrr_floor_toparm");
-#set("x min",  psrr_h/2-psrr_arm_w);
-#set("x max",  psrr_h/2);
-#set("y min", -psrr_w/2);
-#set("y max",  psrr_w/2);
-#set("z min", -wall_h/2+floor_t);
-#set("z max", -wall_h/2+floor_t+psrr_t);
+# TOP ARM
+addrect;
+set("name", "psrr_floor_toparm");
+set("x min",  psrr_h/2-psrr_arm_w);
+set("x max",  psrr_h/2);
+set("y min", -psrr_w/2);
+set("y max",  psrr_w/2);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
+set("material", "Au (Gold) - Palik");
 
-## LEFT ARM
-#addrect;
-#set("name", "psrr_floor_leftarm");
-#set("x min", -psrr_h/2+psrr_arm_w);
-#set("x max",  psrr_h/2-psrr_arm_w);
-#set("y min",  psrr_w/2-psrr_arm_w);
-#set("y max",  psrr_w/2);
-#set("z min", -wall_h/2+floor_t);
-#set("z max", -wall_h/2+floor_t+psrr_t);
+# LEFT ARM
+addrect;
+set("name", "psrr_floor_leftarm");
+set("x min", -psrr_h/2);
+set("x max",  psrr_h/2-psrr_arm_w);
+set("y min",  psrr_w/2-psrr_arm_w);
+set("y max",  psrr_w/2);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
+set("material", "Au (Gold) - Palik");
 
-## RIGHT ARM
-#addrect;
-#set("name", "psrr_floor_rightarm");
-#set("x min", -psrr_h/2+psrr_arm_w);
-#set("x max",  psrr_h/2-psrr_arm_w);
-#set("y min", -psrr_w/2);
-#set("y max", -psrr_w/2+psrr_arm_w);
-#set("z min", -wall_h/2+floor_t);
-#set("z max", -wall_h/2+floor_t+psrr_t);
+# RIGHT ARM
+addrect;
+set("name", "psrr_floor_rightarm");
+set("x min", -psrr_h/2);
+set("x max",  psrr_h/2-psrr_arm_w);
+set("y min", -psrr_w/2);
+set("y max", -psrr_w/2+psrr_arm_w);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
+set("material", "Au (Gold) - Palik");
 
-## BOTTOM LEFT ARM
-#addrect;
-#set("name", "psrr_floor_leftbottom");
-#set("x min", -psrr_h/2+psrr_arm_w);
-#set("x max", -psrr_h/2+2*psrr_arm_w);
-#set("y min", psrr_g/2);
-#set("y max", psrr_w/2-psrr_arm_w);
-#set("z min", -wall_h/2+floor_t);
-#set("z max", -wall_h/2+floor_t+psrr_t);
+# BOTTOM LEFT ARM
+addrect;
+set("name", "psrr_floor_leftbottom");
+set("x min", -psrr_h/2);
+set("x max", -psrr_h/2+psrr_arm_w);
+set("y min", psrr_g/2);
+set("y max", psrr_w/2-psrr_arm_w);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
+set("material", "Au (Gold) - Palik");
 
-## BOTTOM RIGHT ARM
-#addrect;
-#set("name", "psrr_floor_rightbottom");
-#set("x min", -psrr_h/2+psrr_arm_w);
-#set("x max", -psrr_h/2+2*psrr_arm_w);
-#set("y min", -psrr_w/2+psrr_arm_w);
-#set("y max", -psrr_g/2);
-#set("z min", -wall_h/2+floor_t);
-#set("z max", -wall_h/2+floor_t+psrr_t);
+# BOTTOM RIGHT ARM
+addrect;
+set("name", "psrr_floor_rightbottom");
+set("x min", -psrr_h/2);
+set("x max", -psrr_h/2+psrr_arm_w);
+set("y min", -psrr_w/2+psrr_arm_w);
+set("y max", -psrr_g/2);
+set("z min", -wall_h/2+floor_t);
+set("z max", -wall_h/2+floor_t+psrr_t);
+set("material", "Au (Gold) - Palik");
