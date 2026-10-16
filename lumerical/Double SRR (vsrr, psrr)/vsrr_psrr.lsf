@@ -1,7 +1,7 @@
 # Clear workspace
 clear; clc; deleteall;
 
-include_lsrr = 1;   # Left SRR
+include_lsrr = 0;   # Left SRR
 include_rsrr = 1;   # Right SRR
 include_psrr = 1;   # Planar SRR
 
@@ -147,7 +147,7 @@ if(include_lsrr==1){
 if(include_psrr==1) {
     # PLANAR SRR (BSRR)
     psrr_t = 0.05e-6;      # SRR thickness
-    psrr_w = 1.0e-6;       # SRR width
+    psrr_w = 1.7e-6;       # SRR width
     psrr_h = 1.7e-6;       # SRR height
     psrr_g = 0.1e-6;       # SRR gap
     psrr_arm_w = 0.1e-6;   # SRR arm thickness
@@ -215,7 +215,7 @@ if(include_psrr==1) {
 rsrr_t = 0.01e-6;     # SRR thickness
 rsrr_w = 1.0e-6;      # SRR width
 rsrr_h = 2.2e-6;      # SRR height
-rsrr_g = 0.1e-6;      # SRR gap
+rsrr_g = 0.3e-6;      # SRR gap
 rsrr_arm_w = 0.1e-6;  # SRR arm thickness
 
 if(include_rsrr==1){
@@ -230,47 +230,47 @@ if(include_rsrr==1){
     set("z max",  rsrr_h/2);
     set("material", "Au (Gold) - Palik");
     
-    ## LEFT ARM
-    #addrect;
-    #set("name", "rsrr_top");
-    #set("x min", -rsrr_w/2);
-    #set("x max",  rsrr_w/2);
-    #set("y min",  period_y/2-wall_t/2-rsrr_t);
-    #set("y max",  period_y/2-wall_t/2);
-    #set("z min",  rsrr_h/2);
-    #set("z max",  -rsrr_h/2);
-    #set("material", "Au (Gold) - Palik");
+    # LEFT ARM
+    addrect;
+    set("name", "rsrr_left");
+    set("x min", -rsrr_w/2);
+    set("x max", -rsrr_w/2+rsrr_arm_w);
+    set("y min",  period_y/2-wall_t/2-rsrr_t);
+    set("y max",  period_y/2-wall_t/2);
+    set("z min",  -rsrr_h/2);
+    set("z max",  rsrr_h/2-rsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
     
-    ## RIGHT ARM
-    #addrect;
-    #set("name", "vsrr_left_rightarm");
-    #set("x min", -period_x/2+wall_t/2);
-    #set("x max", -period_x/2+wall_t/2+lsrr_t);
-    #set("y min",  lsrr_w/2-lsrr_arm_w);
-    #set("y max",  lsrr_w/2);
-    #set("z min", -lsrr_h/2);
-    #set("z max",  lsrr_h/2-lsrr_arm_w);
-    #set("material", "Au (Gold) - Palik");
+    # RIGHT ARM
+    addrect;
+    set("name", "rsrr_right");
+    set("x min", rsrr_w/2-rsrr_arm_w);
+    set("x max", rsrr_w/2);
+    set("y min",  period_y/2-wall_t/2-rsrr_t);
+    set("y max",  period_y/2-wall_t/2);
+    set("z min",  -rsrr_h/2);
+    set("z max",  rsrr_h/2-rsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
     
-    ## BOTTOM LEFT ARM
-    #addrect;
-    #set("name", "vsrr_left_leftbottom");
-    #set("x min", -period_x/2+wall_t/2);
-    #set("x max", -period_x/2+wall_t/2+lsrr_t);
-    #set("y min", -lsrr_w/2+lsrr_arm_w);
-    #set("y max", -lsrr_g/2);
-    #set("z min",  -lsrr_h/2);
-    #set("z max",  -lsrr_h/2+lsrr_arm_w);
-    #set("material", "Au (Gold) - Palik");
+    # BOTTOM LEFT ARM
+    addrect;
+    set("name", "rsrr_leftbottom");
+    set("x min",  -rsrr_w/2+rsrr_arm_w);
+    set("x max",  -rsrr_g/2);
+    set("y min",  period_y/2-wall_t/2-rsrr_t);
+    set("y max",  period_y/2-wall_t/2);
+    set("z min", -rsrr_h/2);
+    set("z max",  -rsrr_h/2+rsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
     
-    ## BOTTOM RIGHT ARM
-    #addrect;
-    #set("name", "vsrr_left_rightbottom");
-    #set("x min", -period_x/2+wall_t/2);
-    #set("x max", -period_x/2+wall_t/2+lsrr_t);
-    #set("y min",  lsrr_g/2);
-    #set("y max",  lsrr_w/2-lsrr_arm_w);
-    #set("z min", -lsrr_h/2);
-    #set("z max", -lsrr_h/2+lsrr_arm_w);
-    #set("material", "Au (Gold) - Palik");
+    # BOTTOM RIGHT ARM
+    addrect;
+    set("name", "rsrr_rightbottom");
+    set("x min", rsrr_g/2);
+    set("x max", rsrr_w/2-rsrr_arm_w);
+    set("y min",  period_y/2-wall_t/2-rsrr_t);
+    set("y max",  period_y/2-wall_t/2);
+    set("z min", -rsrr_h/2);
+    set("z max", -rsrr_h/2+rsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
 }
