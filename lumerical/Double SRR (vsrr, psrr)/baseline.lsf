@@ -1,0 +1,226 @@
+clear; deleteall;
+
+# SWEEP SETTINGS
+lambda_min = 3e-6;     # shortest wavelength (m)
+lambda_max = 20e-6;     # longest wavelength (m)
+n_points   = 2001;      # number of wavelength increments
+
+# UNIT CELL
+floor_si = 1.00e-6;  # Si floor thickness
+floor_au = 0.50e-6;  # Au sub thickness
+period_x = 2.30e-6;  # Unit cell width
+period_y = 2.30e-6;  # Unit cell depth
+wall_h   = 2.90e-6;  # Wall height
+wall_t   = 0.16e-6;  # Wall thickness
+
+# set RCWA solver properties
+geometry = struct;
+geometry.injection_axis = "z-axis";
+geometry.x_min = -period_x/2;
+geometry.x_max =  period_x/2;
+geometry.y_min = -period_y/2;
+geometry.y_max =  period_y/2;
+geometry.z_min = -2*wall_h;
+geometry.z_max =  2*wall_h;
+geometry.layer_positions = [-wall_h/2-floor_si,
+                            -wall_h/2,
+                             wall_h/2];
+
+excitation = struct;
+lambda_vec = linspace(lambda_min, lambda_max, n_points);
+excitation.f = c/lambda_vec;
+excitation.phi = 0;
+excitation.theta = 15;
+
+options = {"max_N":10};
+
+discretization = linspace(-period_x/2,period_x/2,51); # z locations where fields will be calculated
+
+options={"max_N":10,
+"fields_monitor_z":discretization,
+"fields_monitor_x":[0],
+"fields_monitor_y":[0]};
+
+# ---------------------------------------
+#                UNIT CELL               
+# ---------------------------------------
+# SI FLOOR
+addrect;
+set("name", "si_floor");
+set("x span", period_x);
+set("y span", period_y);
+set("z min", -wall_h/2-floor_si);
+set("z max", -wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("x",0);
+set("y",0);
+
+# AU FLOOR
+addrect;
+set("name", "au_substrate");
+set("x span", period_x);
+set("y span", period_y);
+set("z min", -wall_h/2-floor_si-floor_au);
+set("z max", -wall_h/2-floor_si);
+set("material", "Au (Gold) - Palik");
+set("x",0);
+set("y",0);
+
+# LEFT WALL
+addrect;
+set("name", "cell_wall_left");
+set("x min", -period_x/2);
+set("x max", -period_x/2+wall_t/2);
+set("y min", -period_y/2);
+set("y max",  period_y/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4); 
+
+# RIGHT WALL
+addrect;
+set("name", "cell_wall_right");
+set("x min", period_x/2-wall_t/2);
+set("x max", period_x/2);
+set("y min", -period_y/2);
+set("y max", period_y/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4); 
+
+# BACK WALL
+addrect;
+set("name", "cell_wall_back");
+set("x min", -period_x/2+wall_t/2);
+set("x max",  period_x/2-wall_t/2);
+set("y min",  period_y/2-wall_t/2);
+set("y max",  period_y/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4); 
+
+# FRONT WALL
+addrect;
+set("name", "cell_wall_front");
+set("x min", -period_x/2+wall_t/2);
+set("x max",  period_x/2-wall_t/2);
+set("y min", -period_y/2);
+set("y max", -period_y/2+wall_t/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4); 
+
+# ---------------------------------------
+#                BACK VSRR
+# ---------------------------------------
+# LEFT SRR (LSRR)
+lsrr_t = 0.05e-6;      # SRR thickness
+lsrr_w = 1.08e-6;      # SRR width
+lsrr_h = 2.57e-6;      # SRR height
+lsrr_g = 0.088e-6;     # SRR gap
+lsrr_arm_w = 0.10e-6;  # SRR arm thickness
+
+#if(include_lsrr==1){
+# TOP ARM
+addrect;
+set("name", "lsrr_top");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min", -lsrr_w/2);
+set("y max",  lsrr_w/2);
+set("z min",  lsrr_h/2-lsrr_arm_w);
+set("z max",  lsrr_h/2);
+set("material", "Au (Gold) - Palik");
+
+# LEFT ARM
+addrect;
+set("name", "lsrr_leftarm");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min", -lsrr_w/2);
+set("y max", -lsrr_w/2+lsrr_arm_w);
+set("z min", -lsrr_h/2);
+set("z max",  lsrr_h/2-lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# RIGHT ARM
+addrect;
+set("name", "lsrr_rightarm");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min",  lsrr_w/2-lsrr_arm_w);
+set("y max",  lsrr_w/2);
+set("z min", -lsrr_h/2);
+set("z max",  lsrr_h/2-lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# BOTTOM LEFT ARM
+addrect;
+set("name", "lsrr_leftbottom");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min", -lsrr_w/2+lsrr_arm_w);
+set("y max", -lsrr_g/2);
+set("z min",  -lsrr_h/2);
+set("z max",  -lsrr_h/2+lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+
+# BOTTOM RIGHT ARM
+addrect;
+set("name", "lsrr_rightbottom");
+set("x min", -period_x/2+wall_t/2);
+set("x max", -period_x/2+wall_t/2+lsrr_t);
+set("y min",  lsrr_g/2);
+set("y max",  lsrr_w/2-lsrr_arm_w);
+set("z min", -lsrr_h/2);
+set("z max", -lsrr_h/2+lsrr_arm_w);
+set("material", "Au (Gold) - Palik");
+#}
+
+# add FDTD solver region
+addfdtd;
+set("x min",geometry.x_min);
+set("x max",geometry.x_max);
+set("y min",geometry.y_min);
+set("y max",geometry.y_max);
+set("z min",geometry.z_min);
+set("z max",geometry.z_max);
+
+# run RCWA solver and plot results
+result = rcwa(geometry, excitation, options);
+
+fields = result.Fields; 
+Es = pinch(fields.Es); 
+Hs = pinch(fields.Hs); 
+Ep = pinch(fields.Ep); 
+Hp = pinch(fields.Hp); 
+
+TE = result.TotalEnergy;
+
+lambda_um = c/excitation.f * 1e6;
+
+# s-polarization
+Ts = TE.Ts;
+Rs = TE.Rs;
+As = 1 - Ts - Rs;
+
+# p-polarization (orthogonal)
+Tp = TE.Tp;
+Rp = TE.Rp;
+Ap = 1 - Tp - Rp;
+
+# Plot 1: s-polarization
+plot(lambda_um, Ts, Rs, As, "Wavelength (um)", "Efficiency", "RCWA Spectrum - s-polarization");
+legend("Ts", "Rs", "As");
+
+# Plot 2: p-polarization
+plot(lambda_um, Tp, Rp, Ap, "Wavelength (um)", "Efficiency", "RCWA Spectrum - p-polarization");
+legend("Tp", "Rp", "Ap");
