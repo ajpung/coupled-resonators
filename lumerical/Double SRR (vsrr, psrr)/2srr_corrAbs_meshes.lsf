@@ -1,0 +1,503 @@
+# =====================================================================
+# VSRR unit cell - FDTD, periodic in x/y, normal incidence, E || SRR gap
+# Geometry from Pung et al., Appl. Sci. 2019, 9, 2223 (Table 1)
+# Paper reference (single VSRR): A = 0.96 at 30.21 THz, FWHM = 6.96 THz
+# To run on GPU: pick the GPU resource in the toolbar before running.
+# =====================================================================
+clear;
+closeall;
+deleteall;
+
+# ---------------------------------------
+#             USER SETTINGS
+# ---------------------------------------
+lambda_min = 7.5e-6;        # shortest wavelength (m)  -> 40 THz
+lambda_max = 15e-6;         # longest wavelength (m)   -> 20 THz
+n_points   = 101;           # number of wavelength increments
+d_srr      = 10e-9;         # mesh step around the SRR (m)
+d_cell     = 40e-9;         # mesh step elsewhere in the cell (m)
+sim_time   = 3e-12;         # max simulation time (s); auto-shutoff usually ends it sooner
+air_above  = 3.5e-6;        # air between wall tops and the z-max PML (m)
+
+include_lsrr = 0;  
+include_psrr = 0;
+
+# Surface currents: records H on both faces of the SRR and plots K = n x (H_front - H_back)
+include_currents  = 1;      # 1 = record currents (needs include_lsrr = 1)
+f_current_THz     = 31;     # frequency at which to plot K (THz); use your absorption peak
+n_points_currents = 41;     # points used while recording currents (keeps monitor data small)
+mask_to_metal     = 1;      # 1 = zero K outside the gold pattern in the plots
+
+if (include_currents == 1) {
+    n_points = n_points_currents;
+}
+
+# ---------------------------------------
+#               UNIT CELL
+# ---------------------------------------
+floor_si = 1.00e-6;   # Si floor thickness
+floor_au = 0.50e-6;   # Au sub thickness
+period_x = 2.30e-6;   # Unit cell width
+period_y = 2.30e-6;   # Unit cell depth
+wall_h   = 2.90e-6;   # Wall height
+wall_t   = 0.16e-6;   # Wall thickness (total; each wall here is half, neighbors complete it)
+
+# VSRR (Table 1)
+lsrr_t     = 0.05e-6;   # SRR thickness
+lsrr_w     = 1.08e-6;   # SRR width
+lsrr_h     = 2.57e-6;   # SRR height
+lsrr_g     = 0.088e-6;  # SRR gap
+lsrr_arm_w = 0.10e-6;   # SRR arm width
+
+# Key z-levels
+z_au_top   = -wall_h/2 - floor_si;         # Au / Si interface
+z_fdtd_min = z_au_top - floor_au/2;        # PML starts inside the gold (many skin depths deep)
+z_wall_top =  wall_h/2;
+z_fdtd_max = z_wall_top + air_above;
+z_source   = z_wall_top + 1.0e-6;          # plane wave source
+z_rmon     = z_wall_top + 1.5e-6;          # reflection monitor (must be BEHIND the source)
+
+# SI FLOOR
+addrect;
+set("name", "si_floor");
+set("x", 0);
+set("y", 0);
+set("x span", period_x);
+set("y span", period_y);
+set("z min", -wall_h/2 - floor_si);
+set("z max", -wall_h/2);
+set("material", "Si (Silicon) - Palik");
+
+# AU FLOOR (extends through the z-min PML so no gap/leak at the boundary)
+addrect;
+set("name", "au_substrate");
+set("x", 0);
+set("y", 0);
+set("x span", period_x);
+set("y span", period_y);
+set("z min", z_fdtd_min - 1e-6);
+set("z max", z_au_top);
+set("material", "Au (Gold) - Palik");
+
+# LEFT WALL
+addrect;
+set("name", "cell_wall_left");
+set("x min", -period_x/2);
+set("x max", -period_x/2 + wall_t/2);
+set("y min", -period_y/2);
+set("y max",  period_y/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4);
+
+# RIGHT WALL
+addrect;
+set("name", "cell_wall_right");
+set("x min", period_x/2 - wall_t/2);
+set("x max", period_x/2);
+set("y min", -period_y/2);
+set("y max",  period_y/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4);
+
+# BACK WALL
+addrect;
+set("name", "cell_wall_back");
+set("x min", -period_x/2 + wall_t/2);
+set("x max",  period_x/2 - wall_t/2);
+set("y min",  period_y/2 - wall_t/2);
+set("y max",  period_y/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4);
+
+# FRONT WALL
+addrect;
+set("name", "cell_wall_front");
+set("x min", -period_x/2 + wall_t/2);
+set("x max",  period_x/2 - wall_t/2);
+set("y min", -period_y/2);
+set("y max", -period_y/2 + wall_t/2);
+set("z min", -wall_h/2);
+set("z max",  wall_h/2);
+set("material", "Si (Silicon) - Palik");
+set("override color opacity from material database", 1);
+set("alpha", 0.4);
+
+# ---------------------------------------
+#                 VSRR
+# ---------------------------------------
+if (include_lsrr == 1) {
+    # TOP ARM
+    addrect;
+    set("name", "lsrr_top");
+    set("x min", -period_x/2 + wall_t/2);
+    set("x max", -period_x/2 + wall_t/2 + lsrr_t);
+    set("y min", -lsrr_w/2);
+    set("y max",  lsrr_w/2);
+    set("z min",  lsrr_h/2 - lsrr_arm_w);
+    set("z max",  lsrr_h/2);
+    set("material", "Au (Gold) - Palik");
+
+    # LEFT ARM
+    addrect;
+    set("name", "lsrr_leftarm");
+    set("x min", -period_x/2 + wall_t/2);
+    set("x max", -period_x/2 + wall_t/2 + lsrr_t);
+    set("y min", -lsrr_w/2);
+    set("y max", -lsrr_w/2 + lsrr_arm_w);
+    set("z min", -lsrr_h/2);
+    set("z max",  lsrr_h/2 - lsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
+
+    # RIGHT ARM
+    addrect;
+    set("name", "lsrr_rightarm");
+    set("x min", -period_x/2 + wall_t/2);
+    set("x max", -period_x/2 + wall_t/2 + lsrr_t);
+    set("y min",  lsrr_w/2 - lsrr_arm_w);
+    set("y max",  lsrr_w/2);
+    set("z min", -lsrr_h/2);
+    set("z max",  lsrr_h/2 - lsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
+
+    # BOTTOM LEFT ARM (gap at y = 0)
+    addrect;
+    set("name", "lsrr_leftbottom");
+    set("x min", -period_x/2 + wall_t/2);
+    set("x max", -period_x/2 + wall_t/2 + lsrr_t);
+    set("y min", -lsrr_w/2 + lsrr_arm_w);
+    set("y max", -lsrr_g/2);
+    set("z min", -lsrr_h/2);
+    set("z max", -lsrr_h/2 + lsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
+
+    # BOTTOM RIGHT ARM
+    addrect;
+    set("name", "lsrr_rightbottom");
+    set("x min", -period_x/2 + wall_t/2);
+    set("x max", -period_x/2 + wall_t/2 + lsrr_t);
+    set("y min",  lsrr_g/2);
+    set("y max",  lsrr_w/2 - lsrr_arm_w);
+    set("z min", -lsrr_h/2);
+    set("z max", -lsrr_h/2 + lsrr_arm_w);
+    set("material", "Au (Gold) - Palik");
+}
+
+# ---------------------------------------
+#               BOTTOM VSRR              
+# ---------------------------------------
+if(include_psrr==1) {
+    # PLANAR SRR (BSRR)
+    psrr_t = 0.05e-6;      # SRR thickness
+    psrr_w = 1.7e-6;       # SRR width
+    psrr_h = 1.7e-6;       # SRR height
+    psrr_g = 0.1e-6;       # SRR gap
+    psrr_arm_w = 0.1e-6;   # SRR arm thickness
+    
+    # TOP ARM
+    addrect;
+    set("name", "psrr_floor_toparm");
+    set("x min",  psrr_h/2-psrr_arm_w);
+    set("x max",  psrr_h/2);
+    set("y min", -psrr_w/2);
+    set("y max",  psrr_w/2);
+    set("z min", -wall_h/2);
+    set("z max", -wall_h/2+psrr_t);
+    set("material", "Au (Gold) - Palik");
+    
+    # LEFT ARM
+    addrect;
+    set("name", "psrr_floor_leftarm");
+    set("x min", -psrr_h/2);
+    set("x max",  psrr_h/2-psrr_arm_w);
+    set("y min",  psrr_w/2-psrr_arm_w);
+    set("y max",  psrr_w/2);
+    set("z min", -wall_h/2);
+    set("z max", -wall_h/2+psrr_t);
+    set("material", "Au (Gold) - Palik");
+    
+    # RIGHT ARM
+    addrect;
+    set("name", "psrr_floor_rightarm");
+    set("x min", -psrr_h/2);
+    set("x max",  psrr_h/2-psrr_arm_w);
+    set("y min", -psrr_w/2);
+    set("y max", -psrr_w/2+psrr_arm_w);
+    set("z min", -wall_h/2);
+    set("z max", -wall_h/2+psrr_t);
+    set("material", "Au (Gold) - Palik");
+    
+    # BOTTOM LEFT ARM
+    addrect;
+    set("name", "psrr_floor_leftbottom");
+    set("x min", -psrr_h/2);
+    set("x max", -psrr_h/2+psrr_arm_w);
+    set("y min", psrr_g/2);
+    set("y max", psrr_w/2-psrr_arm_w);
+    set("z min", -wall_h/2);
+    set("z max", -wall_h/2+psrr_t);
+    set("material", "Au (Gold) - Palik");
+    
+    # BOTTOM RIGHT ARM
+    addrect;
+    set("name", "psrr_floor_rightbottom");
+    set("x min", -psrr_h/2);
+    set("x max", -psrr_h/2+psrr_arm_w);
+    set("y min", -psrr_w/2+psrr_arm_w);
+    set("y max", -psrr_g/2);
+    set("z min", -wall_h/2);
+    set("z max", -wall_h/2+psrr_t);
+    set("material", "Au (Gold) - Palik");
+}
+
+# ---------------------------------------
+#            FDTD REGION + BCs
+# ---------------------------------------
+addfdtd;
+set("dimension", "3D");
+# background material left at its default (air, n = 1)
+set("x", 0);
+set("x span", period_x);
+set("y", 0);
+set("y span", period_y);
+set("z min", z_fdtd_min);
+set("z max", z_fdtd_max);
+set("x min bc", "Periodic");
+set("y min bc", "Periodic");
+set("z min bc", "PML");
+set("z max bc", "PML");
+set("simulation time", sim_time);
+set("mesh type", "auto non-uniform");
+set("mesh accuracy", 3);
+
+# ---------------------------------------
+#               MESH OVERRIDES
+# ---------------------------------------
+# Coarse-ish override over the whole structure so the 80 nm half-walls are resolved
+addmesh;
+set("name", "mesh_cell");
+set("x", 0);
+set("x span", period_x);
+set("y", 0);
+set("y span", period_y);
+set("z min", z_fdtd_min);
+set("z max", z_wall_top + 0.2e-6);
+set("override x mesh", 1);
+set("dx", d_cell);
+set("override y mesh", 1);
+set("dy", d_cell);
+set("override z mesh", 1);
+set("dz", d_cell);
+
+# Fine override around the SRR (overlapping regions: the finer step wins)
+addmesh;
+set("name", "mesh_srr");
+set("x min", -period_x/2);
+set("x max", -period_x/2 + wall_t/2 + lsrr_t + 0.15e-6);
+set("y", 0);
+set("y span", lsrr_w + 0.3e-6);
+set("z", 0);
+set("z span", lsrr_h + 0.3e-6);
+set("override x mesh", 1);
+set("dx", d_srr);
+set("override y mesh", 1);
+set("dy", d_srr);
+set("override z mesh", 1);
+set("dz", d_srr);
+
+# Fine override around the PSRR (planar SRR lying on the Si floor). It is only 50 nm thick with
+# 100 nm arms and a 100 nm gap, so it needs the same 10 nm cells in x, y and z. The region is a
+# thin slab (about 200 x 200 x 25 cells) rather than the whole cell, to keep memory down.
+if (include_psrr == 1) {
+    addmesh;
+    set("name", "mesh_psrr");
+    set("x", 0);
+    set("x span", psrr_h + 0.3e-6);
+    set("y", 0);
+    set("y span", psrr_w + 0.3e-6);
+    set("z min", -wall_h/2 - 0.1e-6);
+    set("z max", -wall_h/2 + psrr_t + 0.1e-6);
+    set("override x mesh", 1);
+    set("dx", d_srr);
+    set("override y mesh", 1);
+    set("dy", d_srr);
+    set("override z mesh", 1);
+    set("dz", d_srr);
+}
+
+# ---------------------------------------
+#                 SOURCE
+# ---------------------------------------
+setglobalsource("set wavelength", 1);
+setglobalsource("wavelength start", lambda_min);
+setglobalsource("wavelength stop",  lambda_max);
+
+setglobalmonitor("use source limits", 1);
+setglobalmonitor("use wavelength spacing", 1);
+setglobalmonitor("frequency points", n_points);
+
+addplane;
+set("name", "source");
+set("injection axis", "z");
+set("direction", "Backward");
+set("polarization angle", 90);        # E along y (parallel to the SRR gap); verify in the GUI
+set("x", 0);
+set("x span", period_x);
+set("y", 0);
+set("y span", period_y);
+set("z", z_source);
+
+# ---------------------------------------
+#                MONITORS
+# ---------------------------------------
+addpower;
+set("name", "R_mon");
+set("monitor type", "2D Z-normal");
+set("x", 0);
+set("x span", period_x);
+set("y", 0);
+set("y span", period_y);
+set("z", z_rmon);
+
+# Transmission monitor inside the gold, 0.1 um below the Au/Si interface (T should be ~0)
+addpower;
+set("name", "T_mon");
+set("monitor type", "2D Z-normal");
+set("x", 0);
+set("x span", period_x);
+set("y", 0);
+set("y span", period_y);
+set("z", z_au_top - 0.1e-6);
+
+# Surface-current monitors: one just in front of the SRR (air side), one just behind it
+# (inside the Si wall). The sheet current is the jump in tangential H across the film:
+#   K = n x (H_front - H_back),  n = +x  ->  Ky = -(Hz_f - Hz_b),  Kz = (Hy_f - Hy_b)
+# Both monitors sit inside the fine mesh region and have identical y/z spans, so they share a grid.
+if (include_currents * include_lsrr == 1) {
+    x_back  = -period_x/2 + wall_t/2 - 15e-9;                # 15 nm into the wall behind the SRR
+    x_front = -period_x/2 + wall_t/2 + lsrr_t + 15e-9;       # 15 nm in front of the SRR
+
+    addprofile;
+    set("name", "H_front");
+    set("monitor type", "2D X-normal");
+    set("x", x_front);
+    set("y", 0);
+    set("y span", lsrr_w + 0.2e-6);
+    set("z", 0);
+    set("z span", lsrr_h + 0.2e-6);
+
+    addprofile;
+    set("name", "H_back");
+    set("monitor type", "2D X-normal");
+    set("x", x_back);
+    set("y", 0);
+    set("y span", lsrr_w + 0.2e-6);
+    set("z", 0);
+    set("z span", lsrr_h + 0.2e-6);
+
+    # E-field profile: plane through the middle of the gold film, over the full cell width,
+    # so the metal appears dark and the gap hot spot stands out (as in the paper's Fig. 2)
+    addprofile;
+    set("name", "E_mid");
+    set("monitor type", "2D X-normal");
+    set("x", -period_x/2 + wall_t/2 + lsrr_t/2);
+    set("y", 0);
+    set("y span", period_y);
+    set("z", 0);
+    set("z span", lsrr_h + 0.4e-6);
+}
+
+# ---------------------------------------
+#               RUN + RESULTS
+# ---------------------------------------
+save("vsrr_fdtd");
+run;
+
+f = getdata("R_mon", "f");
+f_THz     = f/1e12;
+lambda_um = c/f*1e6;
+
+# The monitor is behind the source, so transmission() is negative; take the magnitude.
+R_ref = abs(transmission("R_mon"));
+T_tr  = abs(transmission("T_mon"));   # light surviving the gold film (expected ~0)
+A_abs = 1 - R_ref - T_tr;
+
+plot(f_THz, R_ref, T_tr, A_abs, "Frequency (THz)", "Fraction", "VSRR response, E || gap");
+legend("R", "T", "A");
+
+# Peak and approximate FWHM (assumes a single dominant peak)
+Amax   = max(A_abs);
+f_peak = f_THz(find(A_abs, Amax));
+idx    = find(A_abs >= Amax/2);
+fwhm   = abs(f_THz(max(idx)) - f_THz(min(idx)));
+?"Peak A = " + num2str(Amax) + " at " + num2str(f_peak) + " THz, FWHM ~ " + num2str(fwhm) + " THz";
+
+# ---------------------------------------
+#            SURFACE CURRENTS
+# ---------------------------------------
+# K is the net sheet current (A/m) through the 50 nm film, in the same relative units as the
+# monitor fields (scales with the source amplitude). Phasors: Re() is the instantaneous
+# current at phase 0; |K| is the amplitude. Signs follow Lumerical's exp(-i*w*t) convention.
+if (include_currents * include_lsrr == 1) {
+    fm = getdata("H_front", "f");
+    df = abs(fm - f_current_THz*1e12);
+    kf = find(df, min(df));
+    kf = kf(1);
+    f_used_THz = fm(kf)/1e12;
+
+    y_m = getdata("H_front", "y");
+    z_m = getdata("H_front", "z");
+
+    # Select the frequency index, then drop the singleton x dimension -> arrays of size [ny, nz]
+    Hy_f = pinch(pinch(getdata("H_front", "Hy"), 4, kf));
+    Hz_f = pinch(pinch(getdata("H_front", "Hz"), 4, kf));
+    Hy_b = pinch(pinch(getdata("H_back",  "Hy"), 4, kf));
+    Hz_b = pinch(pinch(getdata("H_back",  "Hz"), 4, kf));
+
+    Ky = -(Hz_f - Hz_b);
+    Kz =  (Hy_f - Hy_b);
+
+    if (mask_to_metal == 1) {
+        Y = meshgridx(y_m, z_m);
+        Z = meshgridy(y_m, z_m);
+        pad = 20e-9;
+        m_top   = (abs(Y) <= lsrr_w/2 + pad) * (Z >= lsrr_h/2 - lsrr_arm_w - pad) * (Z <= lsrr_h/2 + pad);
+        m_left  = (Y >= -lsrr_w/2 - pad) * (Y <= -lsrr_w/2 + lsrr_arm_w + pad) * (Z >= -lsrr_h/2 - pad) * (Z <= lsrr_h/2);
+        m_right = (Y >=  lsrr_w/2 - lsrr_arm_w - pad) * (Y <=  lsrr_w/2 + pad) * (Z >= -lsrr_h/2 - pad) * (Z <= lsrr_h/2);
+        m_bot   = (abs(Y) >= lsrr_g/2 - pad) * (abs(Y) <= lsrr_w/2 + pad) * (Z >= -lsrr_h/2 - pad) * (Z <= -lsrr_h/2 + lsrr_arm_w + pad);
+        mask = ((m_top + m_left + m_right + m_bot) > 0);
+        Ky = Ky * mask;
+        Kz = Kz * mask;
+    }
+
+    Kmag = sqrt(abs(Ky)^2 + abs(Kz)^2);
+
+    tag = " @ " + num2str(f_used_THz) + " THz";
+    image(y_m*1e6, z_m*1e6, Kmag,     "y (um)", "z (um)", "Surface current |K|" + tag);
+    image(y_m*1e6, z_m*1e6, real(Kz), "y (um)", "z (um)", "Re(Kz): vertical current (legs)" + tag);
+    image(y_m*1e6, z_m*1e6, real(Ky), "y (um)", "z (um)", "Re(Ky): horizontal current (arms)" + tag);
+
+    # Electric field profile |E| in the mid-film plane (same frequency as the currents).
+    # With a plane-wave source this is approximately |E|/|E0|, comparable to the paper's colorbar.
+    yE = getdata("E_mid", "y");
+    zE = getdata("E_mid", "z");
+    Ex = pinch(pinch(getdata("E_mid", "Ex"), 4, kf));
+    Ey = pinch(pinch(getdata("E_mid", "Ey"), 4, kf));
+    Ez = pinch(pinch(getdata("E_mid", "Ez"), 4, kf));
+    Emag = sqrt(abs(Ex)^2 + abs(Ey)^2 + abs(Ez)^2);
+
+    image(yE*1e6, zE*1e6, Emag, "y (um)", "z (um)", "Electric field profile |E|" + tag);
+    ?"Peak |E| = " + num2str(max(Emag));
+
+    # Export everything for the 3-panel figure (see plot_vsrr_figure.py)
+    matlabsave("vsrr_results.mat", f_THz, R_ref, T_tr, A_abs, f_used_THz, y_m, z_m, Kmag, Ky, Kz, yE, zE, Emag);
+    ?"Saved vsrr_results.mat. Next: python plot_vsrr_figure.py vsrr_results.mat";
+}
