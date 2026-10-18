@@ -1,9 +1,9 @@
 clear; deleteall;
 
 # SWEEP SETTINGS
-lambda_min = 3e-6;     # shortest wavelength (m)
-lambda_max = 20e-6;     # longest wavelength (m)
-n_points   = 2001;      # number of wavelength increments
+lambda_min = 7e-6;     # shortest wavelength (m)
+lambda_max = 15e-6;     # longest wavelength (m)
+n_points   = 10001;      # number of wavelength increments
 
 # UNIT CELL
 floor_si = 1.00e-6;  # Si floor thickness
@@ -12,6 +12,13 @@ period_x = 2.30e-6;  # Unit cell width
 period_y = 2.30e-6;  # Unit cell depth
 wall_h   = 2.90e-6;  # Wall height
 wall_t   = 0.16e-6;  # Wall thickness
+
+# LEFT SRR (LSRR)
+lsrr_t = 0.05e-6;      # SRR thickness
+lsrr_w = 1.08e-6;      # SRR width
+lsrr_h = 2.57e-6;      # SRR height
+lsrr_g = 0.088e-6;     # SRR gap
+lsrr_arm_w = 0.10e-6;  # SRR arm thickness
 
 # set RCWA solver properties
 geometry = struct;
@@ -22,17 +29,15 @@ geometry.y_min = -period_y/2;
 geometry.y_max =  period_y/2;
 geometry.z_min = -2*wall_h;
 geometry.z_max =  2*wall_h;
-geometry.layer_positions = [-wall_h/2-floor_si,
-                            -wall_h/2,
-                             wall_h/2];
+geometry.layer_positions = [-wall_h/2-floor_si-floor_au, -wall_h/2-floor_si, -wall_h/2, -lsrr_h/2, -lsrr_h/2+lsrr_arm_w, lsrr_h/2-lsrr_arm_w, lsrr_h/2, wall_h/2];
 
 excitation = struct;
 lambda_vec = linspace(lambda_min, lambda_max, n_points);
 excitation.f = c/lambda_vec;
 excitation.phi = 0;
-excitation.theta = 15;
+excitation.theta = 0;
 
-options = {"max_N":10};
+options = {"max_N":40};
 
 discretization = linspace(-period_x/2,period_x/2,51); # z locations where fields will be calculated
 
@@ -121,13 +126,6 @@ set("alpha", 0.4);
 # ---------------------------------------
 #                BACK VSRR
 # ---------------------------------------
-# LEFT SRR (LSRR)
-lsrr_t = 0.05e-6;      # SRR thickness
-lsrr_w = 1.08e-6;      # SRR width
-lsrr_h = 2.57e-6;      # SRR height
-lsrr_g = 0.088e-6;     # SRR gap
-lsrr_arm_w = 0.10e-6;  # SRR arm thickness
-
 #if(include_lsrr==1){
 # TOP ARM
 addrect;
