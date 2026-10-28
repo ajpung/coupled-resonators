@@ -19,7 +19,7 @@ d_cell     = 40e-9;         # mesh step elsewhere in the cell (m)
 sim_time   = 3e-12;         # max simulation time (s); auto-shutoff usually ends it sooner
 air_above  = 3.5e-6;        # air between wall tops and the z-max PML (m)
 
-include_lsrr = 0;  
+include_lsrr = 1;  
 include_psrr = 0;
 
 # Surface currents: records H on both faces of the SRR and plots K = n x (H_front - H_back)
@@ -44,7 +44,7 @@ wall_t   = 0.16e-6;   # Wall thickness (total; each wall here is half, neighbors
 
 # VSRR (Table 1)
 lsrr_t     = 0.05e-6;   # SRR thickness
-lsrr_w     = 1.08e-6;   # SRR width
+lsrr_w     = 2.25e-6;   # SRR width
 lsrr_h     = 2.57e-6;   # SRR height
 lsrr_g     = 0.088e-6;  # SRR gap
 lsrr_arm_w = 0.10e-6;   # SRR arm width

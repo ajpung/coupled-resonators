@@ -43,7 +43,7 @@ wall_t   = 0.16e-6;   # Wall thickness (total; each wall here is half, neighbors
 
 # VSRR (Table 1)
 lsrr_t     = 0.05e-6;   # SRR thickness
-lsrr_w     = 1.08e-6;   # SRR width
+lsrr_w     = 2.25e-6;   # SRR width
 lsrr_h     = 2.57e-6;   # SRR height
 lsrr_g     = 0.088e-6;  # SRR gap
 lsrr_arm_w = 0.10e-6;   # SRR arm width
