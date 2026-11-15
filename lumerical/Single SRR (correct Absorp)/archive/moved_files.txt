@@ -1,0 +1,91 @@
+# Moved 2026-11-10 during LSRR/PSRR cleanup. Columns: original path -> new path (relative to 'Single SRR (correct Absorp)')
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p0.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p0.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p1.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p1.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p10.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p10.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p11.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p11.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p2.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p2.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p3.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p3.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p4.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p4.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p5.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p5.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p6.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p6.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p7.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p7.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p8.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p8.log
+LSRR\Abs vs Freq., LSRR height and width\vsrr_lsrr_sweep_p9.log -> archive/LSRR\Abs vs Freq., LSRR height and width/vsrr_lsrr_sweep_p9.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p0.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p0.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p1.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p1.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p10.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p10.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p11.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p11.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p2.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p2.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p3.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p3.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p4.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p4.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p5.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p5.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p6.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p6.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p7.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p7.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p8.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p8.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_lsrr_sweep_p9.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_p9.log
+LSRR/Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_backup.mat -> archive/LSRR/Abs vs Freq., LSRR thickness and gap/vsrr_lsrr_sweep_backup.mat
+LSRR/Abs vs Freq., LSRR thickness and gap/vsrr_fdtd.fsp -> archive/LSRR/Abs vs Freq., LSRR thickness and gap/vsrr_fdtd.fsp
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p0.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p0.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p1.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p1.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p10.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p10.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p11.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p11.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p2.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p2.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p3.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p3.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p4.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p4.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p5.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p5.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p6.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p6.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p7.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p7.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p8.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p8.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_fdtd_p9.log -> archive/LSRR\Abs vs Freq., LSRR thickness and gap/vsrr_fdtd_p9.log
+LSRR/Abs vs Freq., LSRR thickness and gap/vsrr_period_sweep.fsp -> PSRR/Abs vs Freq., X- and Y-Period/psrr_period_sweep.fsp
+LSRR/Abs vs Freq., LSRR thickness and gap/vsrr_period_sweep.mat -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep.mat
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p0.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p0.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p1.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p1.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p10.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p10.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p11.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p11.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p2.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p2.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p3.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p3.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p4.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p4.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p5.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p5.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p6.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p6.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p7.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p7.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p8.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p8.log
+LSRR\Abs vs Freq., LSRR thickness and gap\vsrr_period_sweep_p9.log -> archive/PSRR/Abs vs Freq., X- and Y-Period/from LSRR thickness and gap/vsrr_period_sweep_p9.log
+LSRR/Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep.fsp -> archive/LSRR/Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep.fsp
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p0.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p0.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p1.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p1.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p10.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p10.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p11.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p11.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p2.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p2.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p3.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p3.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p4.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p4.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p5.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p5.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p6.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p6.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p7.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p7.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p8.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p8.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p9.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p9.log
+LSRR/Abs vs Freq., X- and Y-Period/vsrr_period_sweep.fsp -> archive/LSRR/Abs vs Freq., X- and Y-Period/vsrr_period_sweep.fsp
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_period_sweep_p0.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_period_sweep_p0.log
+LSRR\Abs vs Freq., X- and Y-Period\vsrr_fdtd_p0.log -> archive/LSRR\Abs vs Freq., X- and Y-Period/vsrr_fdtd_p0.log
+PSRR/Abs vs Freq., X- and Y-Period/1srr_corrAbs_PeriodSweep.fsp -> archive/PSRR/Abs vs Freq., X- and Y-Period/1srr_corrAbs_PeriodSweep.fsp
+PSRR/Abs vs Freq., X- and Y-Period/1srr_corrAbs_PeriodSweep.lsf -> archive/PSRR/Abs vs Freq., X- and Y-Period/1srr_corrAbs_PeriodSweep.lsf
+PSRR/Abs vs Freq., X- and Y-Period/vsrr_fdtd.fsp -> archive/PSRR/Abs vs Freq., X- and Y-Period/vsrr_fdtd.fsp
+PSRR/Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep.fsp -> archive/PSRR/Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep.fsp
+PSRR/Abs vs Freq., X- and Y-Period/vsrr_period_sweep.fsp -> archive/PSRR/Abs vs Freq., X- and Y-Period/vsrr_period_sweep.fsp
+PSRR/Abs vs Freq., X- and Y-Period/vsrr_period_sweep.mat -> archive/PSRR/Abs vs Freq., X- and Y-Period/vsrr_period_sweep.mat
+PSRR/Abs vs Freq., X- and Y-Period/sweep_maps.png -> archive/PSRR/Abs vs Freq., X- and Y-Period/sweep_maps.png
+PSRR/Abs vs Freq., X- and Y-Period/sweep_maps_metrics.csv -> archive/PSRR/Abs vs Freq., X- and Y-Period/sweep_maps_metrics.csv
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p0.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p0.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p1.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p1.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p10.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p10.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p11.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p11.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p2.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p2.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p3.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p3.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p4.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p4.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p5.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p5.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p6.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p6.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p7.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p7.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p8.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p8.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_lsrr_sweep_p9.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_lsrr_sweep_p9.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_period_sweep_p0.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_period_sweep_p0.log
+PSRR\Abs vs Freq., X- and Y-Period\vsrr_fdtd_p0.log -> archive/PSRR\Abs vs Freq., X- and Y-Period/vsrr_fdtd_p0.log

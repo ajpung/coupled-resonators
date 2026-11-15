@@ -1,8 +1,9 @@
 # =====================================================================
 # Period sweep: absorption vs. X-period and Y-period, 10-50 THz
-# Single-SRR case (LSRR alone by default). The unit cell is rebuilt for every (Px, Py);
-# only R and T are recorded. All spectra are saved to vsrr_period_sweep.mat after every run.
-# Geometry: Pung et al., Appl. Sci. 2019, 9, 2223.   Plot afterwards: python plot_period_sweep.py
+# Single-PSRR case: planar SRR on the Si floor, no LSRR. The unit cell is rebuilt for every (Px, Py);
+# only R and T are recorded. All spectra are saved to psrr_period_sweep.mat after every run.
+# Same periods, cell, materials, mesh and monitors as 1srr_corrAbs_PeriodSweep.lsf; PSRR geometry as in
+# single_psrr_corrAbs_basicGeom.lsf.   Plot afterwards: python plot_period_sweep.py psrr_period_sweep.mat psrr_maps.png
 #
 # BEFORE RUNNING: import the gold data once through the Materials dialog
 #   file: Au_Olmon_evap_IR_ext.txt  (3 columns: wavelength in um, n, k; no header)
@@ -13,6 +14,9 @@
 # =====================================================================
 clear;
 closeall;
+cd(filedirectory(currentscriptname));   # save results next to this script, not in Lumerical's last folder
+?"Saving results to: " + pwd;
+switchtolayout;                         # an opened or finished project starts in analysis mode
 deleteall;
 
 # ---------------------------------------
@@ -29,8 +33,8 @@ Py0    = 2.30e-6;
 dP     = 0.2e-6;                     # sweep step
 n_half = 3;                          # grid is (2*n_half+1) x (2*n_half+1) = 7 x 7
 
-include_lsrr = 1;                    # single-SRR case: LSRR only
-include_psrr = 0;
+include_lsrr = 0;                    # single-PSRR case: PSRR only
+include_psrr = 1;
 
 gold_name = "Au_Olmon_IR";           # imported material (see top of file)
 si_name   = "Si (Silicon) - Palik";
@@ -55,7 +59,7 @@ lsrr_h     = 2.57e-6;
 lsrr_g     = 0.088e-6;
 lsrr_arm_w = 0.10e-6;
 
-# PSRR (same values as in vsrr_fdtd.lsf)
+# PSRR (same values as in single_psrr_corrAbs_basicGeom.lsf)
 psrr_t     = 0.05e-6;
 psrr_w     = 1.7e-6;
 psrr_h     = 1.7e-6;
@@ -414,7 +418,7 @@ for (k = 1:N*N) {
         set("z", z_au_top - 0.1e-6);
 
         # ------------------ RUN + EXTRACT ------------------
-        save("vsrr_period_sweep");
+        save("psrr_period_sweep");
         run;
 
         f = getdata("R_mon", "f");
@@ -436,9 +440,9 @@ for (k = 1:N*N) {
     }
 
     # Save after every run so a crash or a stopped sweep keeps everything done so far
-    matlabsave("vsrr_period_sweep.mat", f_THz, Px_vec, Py_vec, R_all, T_all, A_all, valid, Amax_map, ib, jb);
+    matlabsave("psrr_period_sweep.mat", f_THz, Px_vec, Py_vec, R_all, T_all, A_all, valid, Amax_map, ib, jb);
 }
 
 # Quick look inside Lumerical; use plot_period_sweep.py for the full set of maps
 image(Px_vec*1e6, Py_vec*1e6, Amax_map, "Px (um)", "Py (um)", "Peak absorption, 10-50 THz");
-?"Done. Saved vsrr_period_sweep.mat. Next: python plot_period_sweep.py";
+?"Done. Saved psrr_period_sweep.mat. Next: python plot_period_sweep.py psrr_period_sweep.mat psrr_maps.png";

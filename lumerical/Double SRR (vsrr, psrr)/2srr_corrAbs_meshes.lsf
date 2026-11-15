@@ -19,8 +19,8 @@ d_cell     = 40e-9;         # mesh step elsewhere in the cell (m)
 sim_time   = 3e-12;         # max simulation time (s); auto-shutoff usually ends it sooner
 air_above  = 3.5e-6;        # air between wall tops and the z-max PML (m)
 
-include_lsrr = 1;  
-include_psrr = 0;
+include_lsrr = 0;  
+include_psrr = 1;
 
 # Surface currents: records H on both faces of the SRR and plots K = n x (H_front - H_back)
 include_currents  = 1;      # 1 = record currents (needs include_lsrr = 1)
