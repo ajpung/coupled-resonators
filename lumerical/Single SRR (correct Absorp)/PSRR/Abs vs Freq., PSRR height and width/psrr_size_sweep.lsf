@@ -1,0 +1,413 @@
+# =====================================================================
+# PSRR size sweep: absorption vs. PSRR height and width, 10-50 THz
+# Single-PSRR case: planar SRR on the Si floor, no LSRR. Same cell, walls, materials, mesh and monitors
+# as psrr_corrAbs_PeriodSweep.lsf (periods fixed at 2.3 um); PSRR geometry from single_psrr_corrAbs_basicGeom.lsf.
+#   PSRR height = its extent along x (top arm at +x, gapped bottom arm at -x)
+#   PSRR width  = its extent along y (the gap is cut at y = 0, parallel to E)
+# Run 0 is the PSRR of the period sweep (1.7 x 1.7 um) as a reference; then the Nh x Nw (height x width) grid.
+# Grid order is coarse-first (every other height/width), so a stopped sweep still covers the whole map.
+# Only R and T are recorded. All spectra are saved to psrr_size_sweep.mat after every run.
+# Plot afterwards:  python plot_psrr_sweep.py psrr_size_sweep.mat psrr
+#
+# BEFORE RUNNING: the gold material "Au_Olmon_IR" must already exist in the open project
+# (open psrr_period_sweep.fsp from the PSRR period-sweep folder first).
+# To run on GPU: pick the GPU resource in the toolbar before running.
+# To continue a stopped sweep (crash, restart): reopen Lumerical, set resume_sweep = 1 below and run.
+# Finished runs are skipped. If the main .mat is damaged, copy psrr_size_sweep_backup.mat over it first
+# (it is at most 10 runs behind).
+# =====================================================================
+clear;
+closeall;
+cd(filedirectory(currentscriptname));   # save results next to this script, not in Lumerical's last folder
+?"Saving results to: " + pwd;
+switchtolayout;                         # an opened or finished project starts in analysis mode
+deleteall;
+
+# ---------------------------------------
+#             USER SETTINGS
+# ---------------------------------------
+f_min_THz  = 10;
+f_max_THz  = 50;
+n_points   = 101;                    # uniform in frequency -> 0.4 THz steps
+lambda_min = c/(f_max_THz*1e12);
+lambda_max = c/(f_min_THz*1e12);
+
+# PLACEHOLDER LIMITS: set these before running
+h_min = 0.20e-6;   h_max = 2.20e-6;  Nh = 15;     # PSRR height sweep (x direction)
+w_min = 0.20e-6;   w_max = 2.20e-6;  Nw = 15;     # PSRR width sweep  (y direction)
+
+h_ref = 1.70e-6;                     # reference run: PSRR of psrr_corrAbs_PeriodSweep.lsf
+w_ref = 1.70e-6;
+
+resume_sweep = 0;                          # 1 = reload psrr_size_sweep.mat and skip the runs already done
+
+gold_name = "Au_Olmon_IR";
+si_name   = "Si (Silicon) - Palik";
+
+d_srr     = 10e-9;                   # mesh step around the SRR (m)
+d_cell    = 40e-9;                   # mesh step elsewhere in the cell (m)
+sim_time  = 3e-12;
+air_above = 3.5e-6;
+
+# ---------------------------------------
+#        FIXED GEOMETRY (not swept)
+# ---------------------------------------
+Px = 2.30e-6;                        # periods (paper cell)
+Py = 2.30e-6;
+floor_si = 1.00e-6;
+floor_au = 0.50e-6;
+wall_h   = 2.90e-6;
+wall_t   = 0.16e-6;
+
+psrr_t     = 0.05e-6;
+psrr_g     = 0.1e-6;
+psrr_arm_w = 0.1e-6;
+
+min_h    = 2*psrr_arm_w + 20e-9;                 # shortest PSRR whose top and bottom arms do not touch
+min_w    = 2*psrr_arm_w + psrr_g + 20e-9;        # narrowest PSRR that still has a gap and two arms
+wall_gap = 0.1e-6;                               # total clearance to the walls, as in the period sweep
+
+z_au_top   = -wall_h/2 - floor_si;
+z_fdtd_min = z_au_top - floor_au/2;
+z_wall_top =  wall_h/2;
+z_fdtd_max = z_wall_top + air_above;
+z_source   = z_wall_top + 1.0e-6;
+z_rmon     = z_wall_top + 1.5e-6;
+
+# ---------------------------------------
+#              SWEEP SETUP
+# ---------------------------------------
+h_vec = linspace(h_min, h_max, Nh);
+w_vec = linspace(w_min, w_max, Nw);
+NN = Nh*Nw;
+
+# Run order: reference (m = 0), then the odd-index cells (coarse grid), then everything else.
+# A grid run's spectra go in column m = (ii-1)*Nw + jj of the *_all matrices (ii = height, jj = width).
+order = matrix(NN + 1, 1);
+order(1) = 0;
+cnt = 1;
+for (ii = 1:Nh) {
+    for (jj = 1:Nw) {
+        if ((ii - 2*floor(ii/2) == 1) * (jj - 2*floor(jj/2) == 1) == 1) {
+            cnt = cnt + 1;
+            order(cnt) = (ii - 1)*Nw + jj;
+        }
+    }
+}
+for (ii = 1:Nh) {
+    for (jj = 1:Nw) {
+        if ((ii - 2*floor(ii/2) == 1) * (jj - 2*floor(jj/2) == 1) == 0) {
+            cnt = cnt + 1;
+            order(cnt) = (ii - 1)*Nw + jj;
+        }
+    }
+}
+
+R_all    = matrix(n_points, NN);
+T_all    = matrix(n_points, NN);
+A_all    = matrix(n_points, NN);
+valid    = matrix(Nh, Nw);
+Amax_map = matrix(Nh, Nw);
+ref_R    = matrix(n_points, 1);
+ref_T    = matrix(n_points, 1);
+ref_A    = matrix(n_points, 1);
+ref_done = 0;
+f_THz    = linspace(f_min_THz, f_max_THz, n_points);
+
+if (resume_sweep == 1) {
+    matlabload("psrr_size_sweep.mat");      # restores R_all, T_all, A_all, valid, ref_*, f_THz ...
+    ?"Resumed: " + num2str(sum(valid)) + " grid runs already done.";
+}
+
+# ---------------------------------------
+#                SWEEP LOOP
+# ---------------------------------------
+for (k = 1:NN + 1) {
+    m = order(k);
+    if (m == 0) {
+        hh = h_ref;
+        ww = w_ref;
+        ?"Run " + num2str(k) + " of " + num2str(NN + 1) + ":  REFERENCE  h = " + num2str(hh*1e6) + " um,  w = " + num2str(ww*1e6) + " um";
+    } else {
+        ii = floor((m - 1)/Nw) + 1;
+        jj = m - (ii - 1)*Nw;
+        hh = h_vec(ii);
+        ww = w_vec(jj);
+        ?"Run " + num2str(k) + " of " + num2str(NN + 1) + ":  h = " + num2str(hh*1e6) + " um,  w = " + num2str(ww*1e6) + " um";
+    }
+
+    ok = 1;
+    if (hh < min_h)                    { ok = 0; ?"   skipped: height too small for the top and bottom arms"; }
+    if (ww < min_w)                    { ok = 0; ?"   skipped: width too small for two arms plus the gap"; }
+    if (hh > Px - wall_t - wall_gap)   { ok = 0; ?"   skipped: PSRR would touch the x walls"; }
+    if (ww > Py - wall_t - wall_gap)   { ok = 0; ?"   skipped: PSRR would touch the y walls"; }
+    if (resume_sweep == 1) {
+        if (m == 0) {
+            if (ref_done == 1) { ok = 0; ?"   already done"; }
+        } else {
+            if (valid(ii, jj) == 1) { ok = 0; ?"   already done"; }
+        }
+    }
+
+    if (ok == 1) {
+        switchtolayout;
+        deleteall;
+
+        # SI FLOOR
+        addrect;
+        set("name", "si_floor");
+        set("x", 0);
+        set("y", 0);
+        set("x span", Px);
+        set("y span", Py);
+        set("z min", -wall_h/2 - floor_si);
+        set("z max", -wall_h/2);
+        set("material", si_name);
+
+        # AU FLOOR (extends through the z-min PML)
+        addrect;
+        set("name", "au_substrate");
+        set("x", 0);
+        set("y", 0);
+        set("x span", Px);
+        set("y span", Py);
+        set("z min", z_fdtd_min - 1e-6);
+        set("z max", z_au_top);
+        set("material", gold_name);
+
+        # LEFT WALL
+        addrect;
+        set("name", "cell_wall_left");
+        set("x min", -Px/2);
+        set("x max", -Px/2 + wall_t/2);
+        set("y min", -Py/2);
+        set("y max",  Py/2);
+        set("z min", -wall_h/2);
+        set("z max",  wall_h/2);
+        set("material", si_name);
+        set("override color opacity from material database", 1);
+        set("alpha", 0.4);
+
+        # RIGHT WALL
+        addrect;
+        set("name", "cell_wall_right");
+        set("x min", Px/2 - wall_t/2);
+        set("x max", Px/2);
+        set("y min", -Py/2);
+        set("y max",  Py/2);
+        set("z min", -wall_h/2);
+        set("z max",  wall_h/2);
+        set("material", si_name);
+        set("override color opacity from material database", 1);
+        set("alpha", 0.4);
+
+        # BACK WALL
+        addrect;
+        set("name", "cell_wall_back");
+        set("x min", -Px/2 + wall_t/2);
+        set("x max",  Px/2 - wall_t/2);
+        set("y min",  Py/2 - wall_t/2);
+        set("y max",  Py/2);
+        set("z min", -wall_h/2);
+        set("z max",  wall_h/2);
+        set("material", si_name);
+        set("override color opacity from material database", 1);
+        set("alpha", 0.4);
+
+        # FRONT WALL
+        addrect;
+        set("name", "cell_wall_front");
+        set("x min", -Px/2 + wall_t/2);
+        set("x max",  Px/2 - wall_t/2);
+        set("y min", -Py/2);
+        set("y max", -Py/2 + wall_t/2);
+        set("z min", -wall_h/2);
+        set("z max",  wall_h/2);
+        set("material", si_name);
+        set("override color opacity from material database", 1);
+        set("alpha", 0.4);
+
+        # ------------------ PSRR (planar, on the Si floor), height hh (x) x width ww (y) ------------------
+        addrect;
+        set("name", "psrr_floor_toparm");
+        set("x min",  hh/2 - psrr_arm_w);
+        set("x max",  hh/2);
+        set("y min", -ww/2);
+        set("y max",  ww/2);
+        set("z min", -wall_h/2);
+        set("z max", -wall_h/2 + psrr_t);
+        set("material", gold_name);
+
+        addrect;
+        set("name", "psrr_floor_leftarm");
+        set("x min", -hh/2);
+        set("x max",  hh/2 - psrr_arm_w);
+        set("y min",  ww/2 - psrr_arm_w);
+        set("y max",  ww/2);
+        set("z min", -wall_h/2);
+        set("z max", -wall_h/2 + psrr_t);
+        set("material", gold_name);
+
+        addrect;
+        set("name", "psrr_floor_rightarm");
+        set("x min", -hh/2);
+        set("x max",  hh/2 - psrr_arm_w);
+        set("y min", -ww/2);
+        set("y max", -ww/2 + psrr_arm_w);
+        set("z min", -wall_h/2);
+        set("z max", -wall_h/2 + psrr_t);
+        set("material", gold_name);
+
+        addrect;
+        set("name", "psrr_floor_leftbottom");
+        set("x min", -hh/2);
+        set("x max", -hh/2 + psrr_arm_w);
+        set("y min",  psrr_g/2);
+        set("y max",  ww/2 - psrr_arm_w);
+        set("z min", -wall_h/2);
+        set("z max", -wall_h/2 + psrr_t);
+        set("material", gold_name);
+
+        addrect;
+        set("name", "psrr_floor_rightbottom");
+        set("x min", -hh/2);
+        set("x max", -hh/2 + psrr_arm_w);
+        set("y min", -ww/2 + psrr_arm_w);
+        set("y max", -psrr_g/2);
+        set("z min", -wall_h/2);
+        set("z max", -wall_h/2 + psrr_t);
+        set("material", gold_name);
+
+        # ------------------ FDTD REGION + BCs ------------------
+        addfdtd;
+        set("dimension", "3D");
+        set("x", 0);
+        set("x span", Px);
+        set("y", 0);
+        set("y span", Py);
+        set("z min", z_fdtd_min);
+        set("z max", z_fdtd_max);
+        set("x min bc", "Periodic");
+        set("y min bc", "Periodic");
+        set("z min bc", "PML");
+        set("z max bc", "PML");
+        set("simulation time", sim_time);
+        set("mesh type", "auto non-uniform");
+        set("mesh accuracy", 3);
+
+        # ------------------ MESH OVERRIDES ------------------
+        addmesh;
+        set("name", "mesh_cell");
+        set("x", 0);
+        set("x span", Px);
+        set("y", 0);
+        set("y span", Py);
+        set("z min", z_fdtd_min);
+        set("z max", z_wall_top + 0.2e-6);
+        set("override x mesh", 1);
+        set("dx", d_cell);
+        set("override y mesh", 1);
+        set("dy", d_cell);
+        set("override z mesh", 1);
+        set("dz", d_cell);
+
+        # Fine mesh around the PSRR (a thin slab on the floor), clamped to the cell in x and y
+        xmesh = hh + 0.3e-6;
+        if (xmesh > Px) { xmesh = Px; }
+        ymesh = ww + 0.3e-6;
+        if (ymesh > Py) { ymesh = Py; }
+
+        addmesh;
+        set("name", "mesh_psrr");
+        set("x", 0);
+        set("x span", xmesh);
+        set("y", 0);
+        set("y span", ymesh);
+        set("z min", -wall_h/2 - 0.1e-6);
+        set("z max", -wall_h/2 + psrr_t + 0.1e-6);
+        set("override x mesh", 1);
+        set("dx", d_srr);
+        set("override y mesh", 1);
+        set("dy", d_srr);
+        set("override z mesh", 1);
+        set("dz", d_srr);
+
+        # ------------------ SOURCE ------------------
+        setglobalsource("set wavelength", 1);
+        setglobalsource("wavelength start", lambda_min);
+        setglobalsource("wavelength stop",  lambda_max);
+
+        setglobalmonitor("use source limits", 1);
+        setglobalmonitor("use wavelength spacing", 0);     # uniform in frequency
+        setglobalmonitor("frequency points", n_points);
+
+        addplane;
+        set("name", "source");
+        set("injection axis", "z");
+        set("direction", "Backward");
+        set("polarization angle", 90);        # E along y (parallel to the SRR gap)
+        set("x", 0);
+        set("x span", Px);
+        set("y", 0);
+        set("y span", Py);
+        set("z", z_source);
+
+        # ------------------ MONITORS (R and T only) ------------------
+        addpower;
+        set("name", "R_mon");
+        set("monitor type", "2D Z-normal");
+        set("x", 0);
+        set("x span", Px);
+        set("y", 0);
+        set("y span", Py);
+        set("z", z_rmon);
+
+        addpower;
+        set("name", "T_mon");
+        set("monitor type", "2D Z-normal");
+        set("x", 0);
+        set("x span", Px);
+        set("y", 0);
+        set("y span", Py);
+        set("z", z_au_top - 0.1e-6);
+
+        # ------------------ RUN + EXTRACT ------------------
+        save("psrr_size_sweep");
+        run;
+
+        f = getdata("R_mon", "f");
+        f_THz = f/1e12;
+        R = abs(transmission("R_mon"));      # monitor is behind the source -> negative
+        T = abs(transmission("T_mon"));
+        A = 1 - R - T;
+
+        if (m == 0) {
+            ref_R(1:n_points) = R;
+            ref_T(1:n_points) = T;
+            ref_A(1:n_points) = A;
+            ref_done = 1;
+            ?"   REFERENCE: peak A = " + num2str(max(A)) + " (period sweep at 2.3 x 2.3 um: 0.975 at 31.9 THz)";
+        } else {
+            R_all(1:n_points, m) = R;
+            T_all(1:n_points, m) = T;
+            A_all(1:n_points, m) = A;
+            valid(ii, jj)    = 1;
+            Amax_map(ii, jj) = max(A);
+            ?"   peak A = " + num2str(max(A)) + ",  min A = " + num2str(min(A)) + ",  max T = " + num2str(max(T));
+        }
+        if (min(A) < -0.01) {
+            ?"   WARNING: A < -0.01 -> check PML / mesh / material fit for this cell";
+        }
+    }
+
+    # Save after every run so a crash or a stopped sweep keeps everything done so far
+    matlabsave("psrr_size_sweep.mat", f_THz, h_vec, w_vec, R_all, T_all, A_all, valid, Amax_map, ref_R, ref_T, ref_A, ref_done, h_ref, w_ref);
+    # Every 10th run also keep a second copy, in case a power cut or restart hits while the main file is being written
+    if (k - 10*floor(k/10) == 0) {
+        matlabsave("psrr_size_sweep_backup.mat", f_THz, h_vec, w_vec, R_all, T_all, A_all, valid, Amax_map, ref_R, ref_T, ref_A, ref_done, h_ref, w_ref);
+    }
+}
+
+# Quick look inside Lumerical; use plot_psrr_sweep.py for the frequency-resolved plots
+image(h_vec*1e6, w_vec*1e6, Amax_map, "PSRR height (um)", "PSRR width (um)", "Peak absorption, 10-50 THz");
+?"Done. Saved psrr_size_sweep.mat. Next: python plot_psrr_sweep.py psrr_size_sweep.mat psrr";
